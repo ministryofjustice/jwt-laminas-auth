@@ -16,5 +16,10 @@
         "psr-4": {
             "Carnage\\JwtZendAuth\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Carnage\\JwtZendAuthTest\\": "test/"
+        }
     }
 }

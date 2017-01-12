@@ -5,6 +5,7 @@ namespace Carnage\JwtZendAuth\Service;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer;
+use Lcobucci\JWT\Token;
 use Lcobucci\JWT\ValidationData;
 
 class Jwt
@@ -54,19 +55,19 @@ class Jwt
             ->getToken();
     }
 
-    public function retrieveClaim($token, $claim)
+    public function parseToken($token)
     {
         try {
             $token = $this->parser->parse($token);
         } catch (\InvalidArgumentException $invalidToken) {
-            return null;
+            return new Token();
         }
         if (!$token->validate(new ValidationData())) {
-            return null;
+            return new Token();
         }
         if (!$token->verify($this->signer, $this->verifyKey)) {
-            return null;
+            return new Token();
         }
-        return $token->getClaim($claim);
+        return $token;
     }
 }

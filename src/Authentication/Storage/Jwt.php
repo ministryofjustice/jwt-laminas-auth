@@ -3,104 +3,154 @@
 namespace Carnage\JwtZendAuth\Authentication\Storage;
 
 use Carnage\JwtZendAuth\Service\Jwt as JwtService;
+use Lcobucci\JWT\Token;
 use Zend\Authentication\Storage\StorageInterface;
-use Zend\Http\Request;
-use Zend\Http\Response;
 
+/**
+ * Class Jwt
+ * @package Carnage\JwtZendAuth\Authentication\Storage
+ */
 class Jwt implements StorageInterface
 {
-    private static $headerName = 'X-Authentication-Token';
     private static $claimName = 'session-data';
 
-    private $request;
+    /**
+     * @var bool
+     */
+    private $hasReadClaimData = false;
+
+    /**
+     * @var Token
+     */
+    private $token;
+
+    /**
+     * @var StorageInterface
+     */
+    private $wrapped;
+
+    /**
+     * @var JwtService
+     */
     private $jwt;
 
-    private $newClaimData = null;
-    private $existingClaimData = null;
-    private $hasReadClaimData = false;
-    private $rewriteToken = false;
+    /**
+     * @var int
+     */
+    private $expirationSecs;
 
-
-    private $expirationSecs = 3600;
-
-    public function __construct(JwtService $jwt, Request $request)
+    /**
+     * @param JwtService $jwt
+     * @param StorageInterface $wrapped
+     * @param int $expirationSecs
+     */
+    public function __construct(JwtService $jwt, StorageInterface $wrapped, $expirationSecs = 3600)
     {
         $this->jwt = $jwt;
-        $this->request = $request;
+        $this->wrapped = $wrapped;
+        $this->expirationSecs = $expirationSecs;
     }
 
+    /**
+     * @return bool
+     */
     public function isEmpty()
     {
-        return $this->read() !== null;
+        return $this->read() === null;
     }
 
+    /**
+     * @return mixed
+     */
     public function read()
     {
         if (!$this->hasReadClaimData) {
             $this->hasReadClaimData = true;
-            $this->existingClaimData = $this->readClaimFromHeader();
+            if ($this->shouldRefreshToken()) {
+                $this->writeToken($this->retrieveClaim());
+            }
         }
 
-        return $this->existingClaimData;
+        return $this->retrieveClaim();
     }
 
+    /**
+     * @param mixed $contents
+     */
     public function write($contents)
     {
-        $this->newClaimData = $contents;
         if ($contents !== $this->read()) {
-            $this->rewriteToken = true;
+            $this->writeToken($contents);
         }
     }
 
+    /**
+     * @return void
+     */
     public function clear()
     {
-        $this->newClaimData = null;
-        $this->rewriteToken = true;
+        $this->wrapped->clear();
     }
 
-    /** should be called on MVC EVENT FINAL */
-    public function close(Response $response)
+    /**
+     * @return bool
+     */
+    private function hasTokenValue()
     {
-        if ($this->rewriteToken) {
-            $headerValue = $this->jwt->createSignedToken(self::$claimName, $this->newClaimData, $this->expirationSecs);
-        } elseif ($this->shouldRefreshToken()) {
-            $headerValue = $this->jwt->createSignedToken(self::$claimName, $this->read(), $this->expirationSecs);
-        } elseif (!$this->hasTokenHeader()) {
-            return;
-        } else {
-            $headerValue = $this->getTokenHeader()->getFieldValue();
+        return ($this->wrapped->read() !== null);
+    }
+
+    /**
+     * @return Token|null
+     */
+    private function retrieveToken()
+    {
+        if ($this->token === null) {
+            $this->token = $this->jwt->parseToken($this->wrapped->read());
         }
 
-        $response->getHeaders()->addHeaderLine(self::$headerName, $headerValue);
+        return $this->token;
     }
 
-    private function hasTokenHeader()
+    /**
+     * @return mixed|null
+     */
+    private function retrieveClaim()
     {
-        return $this->request->getHeaders()->has(self::$headerName);
-    }
-
-    private function getTokenHeader()
-    {
-        return $this->request->getHeader(self::$headerName);
-    }
-
-    private function readClaimFromHeader()
-    {
-        if (!$this->hasTokenHeader()) {
+        if (!$this->hasTokenValue()) {
             return null;
         }
 
-        $token = $this->getTokenHeader()->getFieldValue();
-        return $this->jwt->retrieveClaim($token, self::$claimName);
+        try {
+            return $this->retrieveToken()->getClaim(self::$claimName);
+        } catch (\OutOfBoundsException $e) {
+            return null;
+        }
     }
 
+    /**
+     * @return bool
+     */
     private function shouldRefreshToken()
     {
-        if (!$this->hasTokenHeader()) {
+        if (!$this->hasTokenValue()) {
             return false;
         }
 
-        $token = $this->getTokenHeader()->getFieldValue();
-        return date('U') >= ($this->jwt->retrieveClaim($token, 'iat') + 60);
+        try {
+            return date('U') >= ($this->retrieveToken()->getClaim('iat') + 60);
+        } catch (\OutOfBoundsException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @param $claim
+     */
+    private function writeToken($claim)
+    {
+        $this->wrapped->write(
+            $this->jwt->createSignedToken(self::$claimName, $claim, $this->expirationSecs)
+        );
     }
 }

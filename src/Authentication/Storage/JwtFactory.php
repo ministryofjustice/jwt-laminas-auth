@@ -12,7 +12,7 @@ class JwtFactory implements FactoryInterface
     {
         return new Jwt(
             $serviceLocator->get(JwtService::class),
-            $serviceLocator->get('Request')
+            $serviceLocator->get(Header::class)
         );
     }
 }
