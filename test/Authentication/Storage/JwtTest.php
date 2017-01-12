@@ -91,7 +91,11 @@ class JwtTest extends MockeryTestCase
 
         $token = new Token([], ['session-data' => $claim1, 'iat' => $claim2]);
         $expected = 'user1';
-        $newToken = 'newtoken';
+        $newTokenValue = 'newtoken';
+
+        $newToken = m::mock(Token::class);
+        $newToken->shouldReceive('getPayload')->andReturn($newTokenValue);
+        $newToken->shouldReceive('getClaim')->with('session-data')->andReturn($claim1);
 
         $mockJwtService = m::mock(JwtService::class);
         $mockJwtService->shouldReceive('parseToken')->with($storageValue)->andReturn($token);
@@ -99,7 +103,7 @@ class JwtTest extends MockeryTestCase
 
         $mockStorage = m::mock(StorageInterface::class);
         $mockStorage->shouldReceive('read')->andReturn($storageValue);
-        $mockStorage->shouldReceive('write')->with($newToken);
+        $mockStorage->shouldReceive('write')->with($newTokenValue);
 
         $sut = new Jwt($mockJwtService, $mockStorage);
         $this->assertEquals($expected, $sut->read());
@@ -114,15 +118,19 @@ class JwtTest extends MockeryTestCase
      */
     public function testWrite($storageValue, $token, $shouldWrite, $written)
     {
-        $newToken = 'newtoken';
         $mockJwtService = m::mock(JwtService::class);
         $mockJwtService->shouldReceive('parseToken')->with($storageValue)->andReturn($token);
 
         $mockStorage = m::mock(StorageInterface::class);
         $mockStorage->shouldReceive('read')->andReturn($storageValue);
         if ($shouldWrite) {
+            $newTokenValue = 'newtoken';
+
+            $newToken = m::mock(Token::class);
+            $newToken->shouldReceive('getPayload')->andReturn($newTokenValue);
+
             $mockJwtService->shouldReceive('createSignedToken')->with('session-data', $written, 3600)->andReturn($newToken);
-            $mockStorage->shouldReceive('write')->with($newToken)->once();
+            $mockStorage->shouldReceive('write')->with($newTokenValue)->once();
         }
         $sut = new Jwt($mockJwtService, $mockStorage);
         $sut->write($written);

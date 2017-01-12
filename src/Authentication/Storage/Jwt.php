@@ -149,8 +149,9 @@ class Jwt implements StorageInterface
      */
     private function writeToken($claim)
     {
+        $this->token = $this->jwt->createSignedToken(self::$claimName, $claim, $this->expirationSecs);
         $this->wrapped->write(
-            $this->jwt->createSignedToken(self::$claimName, $claim, $this->expirationSecs)
+            $this->token->getPayload()
         );
     }
 }
