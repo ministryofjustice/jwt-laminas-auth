@@ -76,7 +76,7 @@ class HeaderTest extends MockeryTestCase
         $sut->close($response);
 
         $this->assertTrue($response->getHeaders()->has(Header::HEADER_NAME), 'Header missing from response');
-        $this->assertEquals('token', $response->getHeaders()->get(Header::HEADER_NAME)->getFieldValue());
+        $this->assertEquals('Bearer token', $response->getHeaders()->get(Header::HEADER_NAME)->getFieldValue());
     }
 
     public function testWrite()
@@ -91,7 +91,7 @@ class HeaderTest extends MockeryTestCase
         $sut->close($response);
 
         $this->assertTrue($response->getHeaders()->has(Header::HEADER_NAME), 'Header missing from response');
-        $this->assertEquals('newtoken', $response->getHeaders()->get(Header::HEADER_NAME)->getFieldValue());
+        $this->assertEquals('Bearer newtoken', $response->getHeaders()->get(Header::HEADER_NAME)->getFieldValue());
     }
 
 

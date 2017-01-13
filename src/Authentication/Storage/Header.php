@@ -9,7 +9,7 @@ use Zend\Stdlib\RequestInterface;
 
 class Header implements StorageInterface
 {
-    const HEADER_NAME = 'X-Authentication-Token';
+    const HEADER_NAME = 'Authorization';
 
     private $request;
 
@@ -61,7 +61,7 @@ class Header implements StorageInterface
         }
 
         if ($this->contents !== null) {
-            $response->getHeaders()->addHeaderLine(self::HEADER_NAME, $this->contents);
+            $response->getHeaders()->addHeaderLine(self::HEADER_NAME, 'Bearer ' . $this->contents);
         }
     }
 
@@ -85,6 +85,6 @@ class Header implements StorageInterface
 
     private function readHeader()
     {
-        return $this->getHeader()->getFieldValue();
+        return str_replace('Bearer ', '', $this->getHeader()->getFieldValue());
     }
 }
