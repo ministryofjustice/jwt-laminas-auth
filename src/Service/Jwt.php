@@ -46,6 +46,10 @@ class Jwt
 
     public function createSignedToken($claim, $value, $expirationSecs)
     {
+        if (empty($this->signKey)) {
+            throw new \RuntimeException('Cannot sign a token, no sign key was provided');
+        }
+
         $timestamp = date('U');
         return (new Builder())
             ->setIssuedAt($timestamp)
