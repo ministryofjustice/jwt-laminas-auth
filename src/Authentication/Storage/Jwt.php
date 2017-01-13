@@ -44,7 +44,7 @@ class Jwt implements StorageInterface
      * @param StorageInterface $wrapped
      * @param int $expirationSecs
      */
-    public function __construct(JwtService $jwt, StorageInterface $wrapped, $expirationSecs = 3600)
+    public function __construct(JwtService $jwt, StorageInterface $wrapped, $expirationSecs = 600)
     {
         $this->jwt = $jwt;
         $this->wrapped = $wrapped;

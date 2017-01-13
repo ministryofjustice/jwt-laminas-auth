@@ -99,7 +99,7 @@ class JwtTest extends MockeryTestCase
 
         $mockJwtService = m::mock(JwtService::class);
         $mockJwtService->shouldReceive('parseToken')->with($storageValue)->andReturn($token);
-        $mockJwtService->shouldReceive('createSignedToken')->with('session-data', $expected, 3600)->andReturn($newToken);
+        $mockJwtService->shouldReceive('createSignedToken')->with('session-data', $expected, 600)->andReturn($newToken);
 
         $mockStorage = m::mock(StorageInterface::class);
         $mockStorage->shouldReceive('read')->andReturn($storageValue);
@@ -129,7 +129,7 @@ class JwtTest extends MockeryTestCase
             $newToken = m::mock(Token::class);
             $newToken->shouldReceive('getPayload')->andReturn($newTokenValue);
 
-            $mockJwtService->shouldReceive('createSignedToken')->with('session-data', $written, 3600)->andReturn($newToken);
+            $mockJwtService->shouldReceive('createSignedToken')->with('session-data', $written, 600)->andReturn($newToken);
             $mockStorage->shouldReceive('write')->with($newTokenValue)->once();
         }
         $sut = new Jwt($mockJwtService, $mockStorage);
