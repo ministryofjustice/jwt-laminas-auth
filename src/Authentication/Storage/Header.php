@@ -27,7 +27,7 @@ class Header implements StorageInterface
 
     public function isEmpty()
     {
-        return ($this->read() === null);
+        return empty($this->read());
     }
 
     public function read()
