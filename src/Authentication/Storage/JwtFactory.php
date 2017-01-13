@@ -10,9 +10,12 @@ class JwtFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+        $config = $serviceLocator->get('Config')['jwt_zend_auth'];
+
         return new Jwt(
             $serviceLocator->get(JwtService::class),
-            $serviceLocator->get(Header::class)
+            $serviceLocator->get(Header::class),
+            $config['expiry']
         );
     }
 }

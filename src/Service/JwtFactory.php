@@ -11,12 +11,23 @@ class JwtFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+        $config = $serviceLocator->get('Config')['jwt_zend_auth'];
+
+        $signer = new $config['signer']();
+
+        if (empty($config['signKey']) && !$config['readOnly']) {
+            throw new \RuntimeException('A signing key was not provided, provide one or set to read only');
+        }
+
+        if (empty($config['verifyKey'])) {
+            throw new \RuntimeException('A verify key was not provided');
+        }
+
         return new Jwt(
-            //Hmac is not known to be vulnerable to length extension attacks, but using sha384 provides extra defence
-            new Sha384(),
+            $signer,
             new Parser(),
-            'secretKey123',
-            'secretKey123'
+            $config['verifyKey'],
+            $config['signKey']
         );
     }
 }

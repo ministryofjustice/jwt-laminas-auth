@@ -4,6 +4,7 @@ namespace Carnage\JwtZendAuth;
 
 use Carnage\JwtZendAuth\Authentication\Storage;
 use Carnage\JwtZendAuth\Service;
+use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 
 class Module implements ConfigProviderInterface
@@ -17,6 +18,13 @@ class Module implements ConfigProviderInterface
                     Service\Jwt::class => Service\JwtFactory::class,
                     Storage\Header::class => Storage\HeaderFactory::class,
                 ]
+            ],
+            'jwt_zend_auth' => [
+                'signer' => Sha256::class,
+                'readOnly' => false,
+                'signKey' => '',
+                'verifyKey' => '',
+                'expiry' => 600
             ]
         ];
     }
