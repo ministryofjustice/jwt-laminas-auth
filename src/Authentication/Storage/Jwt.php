@@ -12,7 +12,7 @@ use Zend\Authentication\Storage\StorageInterface;
  */
 class Jwt implements StorageInterface
 {
-    private static $claimName = 'session-data';
+    const SESSION_CLAIM_NAME = 'session-data';
     const DEFAULT_EXPIRATION_SECS = 600;
 
     /**
@@ -126,7 +126,7 @@ class Jwt implements StorageInterface
         }
 
         try {
-            return $this->retrieveToken()->getClaim(self::$claimName);
+            return $this->retrieveToken()->getClaim(self::SESSION_CLAIM_NAME);
         } catch (\OutOfBoundsException $e) {
             return null;
         }
@@ -154,7 +154,7 @@ class Jwt implements StorageInterface
     private function writeToken($claim)
     {
         try {
-            $this->token = $this->jwt->createSignedToken(self::$claimName, $claim, $this->expirationSecs);
+            $this->token = $this->jwt->createSignedToken(self::SESSION_CLAIM_NAME, $claim, $this->expirationSecs);
 
             $this->wrapped->write(
                 $this->token->getPayload()
