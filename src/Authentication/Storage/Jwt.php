@@ -13,6 +13,7 @@ use Zend\Authentication\Storage\StorageInterface;
 class Jwt implements StorageInterface
 {
     private static $claimName = 'session-data';
+    const DEFAULT_EXPIRATION_SECS = 600;
 
     /**
      * @var bool
@@ -44,8 +45,11 @@ class Jwt implements StorageInterface
      * @param StorageInterface $wrapped
      * @param int $expirationSecs
      */
-    public function __construct(JwtService $jwt, StorageInterface $wrapped, $expirationSecs = 600)
-    {
+    public function __construct(
+        JwtService $jwt,
+        StorageInterface $wrapped,
+        $expirationSecs = self::DEFAULT_EXPIRATION_SECS
+    ) {
         $this->jwt = $jwt;
         $this->wrapped = $wrapped;
         $this->expirationSecs = $expirationSecs;
