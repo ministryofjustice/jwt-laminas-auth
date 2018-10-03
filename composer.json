@@ -5,7 +5,11 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.5",
-        "zendframework/zendframework": "^2.3.0",
+        "zendframework/zend-servicemanager": "^2.3.0",
+        "zendframework/zend-modulemanager": "^2.3.0",
+        "zendframework/zend-authentication": "^2.3.0",
+        "zendframework/zend-http": "^2.3.0",
+        "zendframework/zend-console": "^2.3.0",
         "lcobucci/jwt":"~3.0.0"
     },
     "require-dev": {
