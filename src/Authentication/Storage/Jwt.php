@@ -157,7 +157,7 @@ class Jwt implements StorageInterface
             $this->token = $this->jwt->createSignedToken(self::SESSION_CLAIM_NAME, $claim, $this->expirationSecs);
 
             $this->wrapped->write(
-                $this->token->getPayload()
+                $this->token->__toString()
             );
         } catch (\RuntimeException $e) {}
     }

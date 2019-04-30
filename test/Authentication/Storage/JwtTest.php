@@ -127,7 +127,7 @@ class JwtTest extends MockeryTestCase
             $newTokenValue = 'newtoken';
 
             $newToken = m::mock(Token::class);
-            $newToken->shouldReceive('getPayload')->andReturn($newTokenValue);
+            $newToken->shouldReceive('__toString')->andReturn($newTokenValue);
 
             $mockJwtService->shouldReceive('createSignedToken')->with('session-data', $written, 600)->andReturn($newToken);
             $mockStorage->shouldReceive('write')->with($newTokenValue)->once();
