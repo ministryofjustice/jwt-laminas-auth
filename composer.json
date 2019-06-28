@@ -4,7 +4,7 @@
     "prefer-stable": true,
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.5",
+        "php": "^7.1",
         "zendframework/zend-servicemanager": "^2.3.0",
         "zendframework/zend-modulemanager": "^2.3.0",
         "zendframework/zend-authentication": "^2.3.0",
