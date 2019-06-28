@@ -142,7 +142,7 @@ class Jwt implements StorageInterface
         }
 
         try {
-            return date('U') >= ($this->retrieveToken()->getClaim('iat') + 60);
+            return date('U') >= ($this->retrieveToken()->getClaim('iat') + 60) && $this->retrieveClaim() !== null;
         } catch (\OutOfBoundsException $e) {
             return false;
         }
