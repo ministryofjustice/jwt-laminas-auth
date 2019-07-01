@@ -17,6 +17,7 @@ class Module implements ConfigProviderInterface
                     Storage\Jwt::class => Storage\JwtFactory::class,
                     Service\Jwt::class => Service\JwtFactory::class,
                     Storage\Header::class => Storage\HeaderFactory::class,
+                    Storage\Cookie::class => Storage\CookieFactory::class,
                 ]
             ],
             'jwt_zend_auth' => [
@@ -24,7 +25,19 @@ class Module implements ConfigProviderInterface
                 'readOnly' => false,
                 'signKey' => '',
                 'verifyKey' => '',
-                'expiry' => 600
+                'expiry' => 600,
+                'cookieOptions' => [
+                    'path' => '/',
+                    'domain' => null,
+                    'secure' => true,
+                    'expiry' => 600,
+                    'httpOnly' => true,
+                ],
+                'storage' => [
+                    'adaptor' => Storage\Header::class,
+                    'useChainAdaptor' => false,
+                    'adaptors' => [],
+                ],
             ]
         ];
     }
