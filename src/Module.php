@@ -31,6 +31,7 @@ class Module implements ConfigProviderInterface
                     'domain' => null,
                     'secure' => true,
                     'expiry' => 600,
+                    'httpOnly' => true,
                 ],
                 'storage' => [
                     'adaptor' => Storage\Header::class,

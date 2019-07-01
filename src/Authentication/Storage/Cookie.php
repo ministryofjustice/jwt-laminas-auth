@@ -22,6 +22,7 @@ class Cookie implements StorageInterface
         'domain' => null,
         'secure' => true,
         'expiry' => 600,
+        'httpOnly' => true,
     ];
 
     public function __construct(RequestInterface $request, array $cookieOptions = [])
@@ -73,7 +74,7 @@ class Cookie implements StorageInterface
                 $this->cookieOptions['path'], //path
                 $this->cookieOptions['domain'], // domain
                 $this->cookieOptions['secure'], //secure
-                true // httponly
+                $this->cookieOptions['httpOnly'] // httponly
             ) extends SetCookie {
                 public function getFieldValue()
                 {
