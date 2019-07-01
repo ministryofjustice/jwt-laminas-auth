@@ -38,6 +38,15 @@ class CookieTest extends MockeryTestCase
         ];
     }
 
+    public function testConsecutiveRead()
+    {
+        $request = new Request();
+        $request->getHeaders()->addHeader(new CookieHeader([Cookie::COOKIE_NAME => 'token']));
+
+        $sut = new Cookie($request);
+        $this->assertEquals($sut->read(), $sut->read());
+    }
+
     /**
      * @dataProvider provideIsEmpty
      * @param $request
