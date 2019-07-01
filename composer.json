@@ -13,8 +13,8 @@
         "lcobucci/jwt":"~3.0.0"
     },
     "require-dev": {
-        "mockery/mockery": "^0.9.0",
-        "phpunit/phpunit": "^4.0.14"
+        "mockery/mockery": "^1.2.0",
+        "phpunit/phpunit": "^7.0"
     },
     "autoload": {
         "psr-4": {

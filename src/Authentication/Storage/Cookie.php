@@ -91,7 +91,7 @@ class Cookie implements StorageInterface
             return false;
         }
 
-        return $this->request->getCookie()->offsetExists(self::COOKIE_NAME);
+        return $this->request->getHeaders()->has('Cookie') && $this->request->getCookie()->offsetExists(self::COOKIE_NAME);
     }
 
     private function readCookie()
