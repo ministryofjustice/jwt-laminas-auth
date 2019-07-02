@@ -15,6 +15,8 @@ class CookieFactory implements FactoryInterface
     {
         $config = $serviceLocator->get('Config')['jwt_zend_auth'];
 
+        $config['cookieOptions']['expiry'] = $config['expiry'];
+
         $cookieStorage = new Cookie(
             $serviceLocator->get('Request'),
             $config['cookieOptions']
