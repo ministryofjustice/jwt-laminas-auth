@@ -30,7 +30,6 @@ class Module implements ConfigProviderInterface
                     'path' => '/',
                     'domain' => null,
                     'secure' => true,
-                    'expiry' => 600,
                     'httpOnly' => true,
                 ],
                 'storage' => [
