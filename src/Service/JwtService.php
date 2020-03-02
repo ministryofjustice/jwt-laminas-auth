@@ -1,14 +1,18 @@
 <?php
 
-namespace Carnage\JwtZendAuth\Service;
+declare(strict_types=1);
 
+namespace JwtZendAuth\Service;
+
+use InvalidArgumentException;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\ValidationData;
+use RuntimeException;
 
-class Jwt
+class JwtService
 {
     /**
      * @var Signer
@@ -47,7 +51,7 @@ class Jwt
     public function createSignedToken($claim, $value, $expirationSecs)
     {
         if (empty($this->signKey)) {
-            throw new \RuntimeException('Cannot sign a token, no sign key was provided');
+            throw new RuntimeException('Cannot sign a token, no sign key was provided');
         }
 
         $timestamp = date('U');
@@ -63,15 +67,18 @@ class Jwt
     {
         try {
             $token = $this->parser->parse($token);
-        } catch (\InvalidArgumentException $invalidToken) {
+        } catch (InvalidArgumentException $invalidToken) {
             return new Token();
         }
+
         if (!$token->validate(new ValidationData())) {
             return new Token();
         }
+
         if (!$token->verify($this->signer, $this->verifyKey)) {
             return new Token();
         }
+
         return $token;
     }
 }

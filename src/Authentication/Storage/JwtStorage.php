@@ -1,16 +1,16 @@
 <?php
 
-namespace Carnage\JwtZendAuth\Authentication\Storage;
+declare(strict_types=1);
 
-use Carnage\JwtZendAuth\Service\Jwt as JwtService;
+namespace JwtZendAuth\Authentication\Storage;
+
+use JwtZendAuth\Service\JwtService as JwtService;
 use Lcobucci\JWT\Token;
+use OutOfBoundsException;
+use RuntimeException;
 use Zend\Authentication\Storage\StorageInterface;
 
-/**
- * Class Jwt
- * @package Carnage\JwtZendAuth\Authentication\Storage
- */
-class Jwt implements StorageInterface
+class JwtStorage implements StorageInterface
 {
     const SESSION_CLAIM_NAME = 'session-data';
     const DEFAULT_EXPIRATION_SECS = 600;
@@ -127,7 +127,7 @@ class Jwt implements StorageInterface
 
         try {
             return $this->retrieveToken()->getClaim(self::SESSION_CLAIM_NAME);
-        } catch (\OutOfBoundsException $e) {
+        } catch (OutOfBoundsException $e) {
             return null;
         }
     }
@@ -143,7 +143,7 @@ class Jwt implements StorageInterface
 
         try {
             return date('U') >= ($this->retrieveToken()->getClaim('iat') + 60) && $this->retrieveClaim() !== null;
-        } catch (\OutOfBoundsException $e) {
+        } catch (OutOfBoundsException $e) {
             return false;
         }
     }
@@ -159,6 +159,6 @@ class Jwt implements StorageInterface
             $this->wrapped->write(
                 $this->token->__toString()
             );
-        } catch (\RuntimeException $e) {}
+        } catch (RuntimeException $e) {}
     }
 }
