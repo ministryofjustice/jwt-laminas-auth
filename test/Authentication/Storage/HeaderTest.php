@@ -1,9 +1,8 @@
 <?php
 
-namespace Carnage\JwtZendAuthTest\Authentication\Storage;
+namespace JwtZendAuthTest\Authentication\Storage;
 
-use Carnage\JwtZendAuth\Authentication\Storage\Header;
-use Mockery as m;
+use JwtZendAuth\Authentication\Storage\Header;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Http\Request;

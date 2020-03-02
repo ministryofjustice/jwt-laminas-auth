@@ -1,9 +1,18 @@
 <?php
 
-namespace Carnage\JwtZendAuth;
+declare(strict_types=1);
 
-use Carnage\JwtZendAuth\Authentication\Storage;
-use Carnage\JwtZendAuth\Service;
+namespace JwtZendAuth;
+
+use JwtZendAuth\Authentication\Storage;
+use JwtZendAuth\Authentication\Storage\Cookie;
+use JwtZendAuth\Authentication\Storage\Factory\CookieFactory;
+use JwtZendAuth\Authentication\Storage\Factory\HeaderFactory;
+use JwtZendAuth\Authentication\Storage\Factory\JwtStorageFactory;
+use JwtZendAuth\Authentication\Storage\Header;
+use JwtZendAuth\Authentication\Storage\JwtStorage;
+use JwtZendAuth\Service\Factory\JwtServiceFactory;
+use JwtZendAuth\Service\JwtService;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 
@@ -14,10 +23,10 @@ class Module implements ConfigProviderInterface
         return [
             'service_manager' => [
                 'factories' => [
-                    Storage\Jwt::class => Storage\JwtFactory::class,
-                    Service\Jwt::class => Service\JwtFactory::class,
-                    Storage\Header::class => Storage\HeaderFactory::class,
-                    Storage\Cookie::class => Storage\CookieFactory::class,
+                    JwtStorage::class => JwtStorageFactory::class,
+                    JwtService::class => JwtServiceFactory::class,
+                    Header::class => HeaderFactory::class,
+                    Cookie::class => CookieFactory::class,
                 ]
             ],
             'jwt_zend_auth' => [

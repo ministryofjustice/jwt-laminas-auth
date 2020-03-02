@@ -1,9 +1,9 @@
 <?php
 
-namespace Carnage\JwtZendAuthTest\Authentication\Storage;
+namespace JwtZendAuthTest\Authentication\Storage;
 
-use Carnage\JwtZendAuth\Authentication\Storage\Jwt;
-use Carnage\JwtZendAuth\Service\Jwt as JwtService;
+use JwtZendAuth\Authentication\Storage\JwtStorage;
+use JwtZendAuth\Service\JwtService;
 use Lcobucci\JWT\Claim\Basic;
 use Lcobucci\JWT\Token;
 use Mockery as m;
@@ -26,7 +26,7 @@ class JwtTest extends MockeryTestCase
         $mockStorage = m::mock(StorageInterface::class);
         $mockStorage->shouldReceive('read')->andReturn($storageValue);
 
-        $sut = new Jwt($mockJwtService, $mockStorage);
+        $sut = new JwtStorage($mockJwtService, $mockStorage);
         $this->assertEquals($expected, $sut->read());
     }
 
@@ -61,7 +61,7 @@ class JwtTest extends MockeryTestCase
         $mockStorage = m::mock(StorageInterface::class);
         $mockStorage->shouldReceive('read')->andReturn($storageValue);
 
-        $sut = new Jwt($mockJwtService, $mockStorage);
+        $sut = new JwtStorage($mockJwtService, $mockStorage);
         $this->assertEquals($expected, $sut->isEmpty());
     }
 
@@ -105,7 +105,7 @@ class JwtTest extends MockeryTestCase
         $mockStorage->shouldReceive('read')->andReturn($storageValue);
         $mockStorage->shouldReceive('write')->with($newTokenValue);
 
-        $sut = new Jwt($mockJwtService, $mockStorage);
+        $sut = new JwtStorage($mockJwtService, $mockStorage);
         $this->assertEquals($expected, $sut->read());
     }
 
@@ -132,7 +132,7 @@ class JwtTest extends MockeryTestCase
             $mockJwtService->shouldReceive('createSignedToken')->with('session-data', $written, 600)->andReturn($newToken);
             $mockStorage->shouldReceive('write')->with($newTokenValue)->once();
         }
-        $sut = new Jwt($mockJwtService, $mockStorage);
+        $sut = new JwtStorage($mockJwtService, $mockStorage);
         $sut->write($written);
     }
 
@@ -159,7 +159,7 @@ class JwtTest extends MockeryTestCase
         $mockStorage = m::mock(StorageInterface::class);
         $mockStorage->shouldReceive('clear')->once();
 
-        $sut = new Jwt($mockJwtService, $mockStorage);
+        $sut = new JwtStorage($mockJwtService, $mockStorage);
 
         $sut->clear();
     }

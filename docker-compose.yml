@@ -1,0 +1,20 @@
+---
+version: "3.6"
+
+services:
+  composer:
+    image: composer
+    volumes:
+      - "~/.composer:/tmp"
+      - "./:/app"
+    command: ["install", "--ignore-platform-reqs"]
+
+  unit-test:
+    image: jwt-zend-auth-unit
+    build:
+      context: ./
+      dockerfile: ./unittest.Dockerfile
+    entrypoint: [/app/vendor/bin/phpunit]
+    command:
+      - --configuration
+      - /app/phpunit.xml.dist

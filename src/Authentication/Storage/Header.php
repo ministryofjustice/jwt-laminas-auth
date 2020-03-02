@@ -1,6 +1,8 @@
 <?php
 
-namespace Carnage\JwtZendAuth\Authentication\Storage;
+declare(strict_types=1);
+
+namespace JwtZendAuth\Authentication\Storage;
 
 use Zend\Authentication\Storage\StorageInterface;
 use Zend\Http\Request;

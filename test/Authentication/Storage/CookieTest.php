@@ -1,8 +1,8 @@
 <?php
 
-namespace Carnage\JwtZendAuthTest\Authentication\Storage;
+namespace JwtZendAuthTest\Authentication\Storage;
 
-use Carnage\JwtZendAuth\Authentication\Storage\Cookie;
+use JwtZendAuth\Authentication\Storage\Cookie;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Http\Header\Cookie as CookieHeader;
