@@ -1,12 +1,12 @@
 <?php
 
-namespace JwtZendAuthTest\Authentication\Storage;
+namespace JwtLaminasAuthTest\Authentication\Storage;
 
-use JwtZendAuth\Authentication\Storage\Header;
+use JwtLaminasAuth\Authentication\Storage\Header;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Zend\Console\Request as ConsoleRequest;
-use Zend\Http\Request;
-use Zend\Http\Response;
+use Laminas\Console\Request as ConsoleRequest;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
 
 class HeaderTest extends MockeryTestCase
 {

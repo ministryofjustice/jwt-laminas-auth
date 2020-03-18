@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace JwtZendAuth;
+namespace JwtLaminasAuth;
 
-use JwtZendAuth\Authentication\Storage;
-use JwtZendAuth\Authentication\Storage\Cookie;
-use JwtZendAuth\Authentication\Storage\Factory\CookieFactory;
-use JwtZendAuth\Authentication\Storage\Factory\HeaderFactory;
-use JwtZendAuth\Authentication\Storage\Factory\JwtStorageFactory;
-use JwtZendAuth\Authentication\Storage\Header;
-use JwtZendAuth\Authentication\Storage\JwtStorage;
-use JwtZendAuth\Service\Factory\JwtServiceFactory;
-use JwtZendAuth\Service\JwtService;
+use JwtLaminasAuth\Authentication\Storage;
+use JwtLaminasAuth\Authentication\Storage\Cookie;
+use JwtLaminasAuth\Authentication\Storage\Factory\CookieFactory;
+use JwtLaminasAuth\Authentication\Storage\Factory\HeaderFactory;
+use JwtLaminasAuth\Authentication\Storage\Factory\JwtStorageFactory;
+use JwtLaminasAuth\Authentication\Storage\Header;
+use JwtLaminasAuth\Authentication\Storage\JwtStorage;
+use JwtLaminasAuth\Service\Factory\JwtServiceFactory;
+use JwtLaminasAuth\Service\JwtService;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
-use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Laminas\ModuleManager\Feature\ConfigProviderInterface;
 
 class Module implements ConfigProviderInterface
 {
@@ -29,7 +29,7 @@ class Module implements ConfigProviderInterface
                     Cookie::class => CookieFactory::class,
                 ]
             ],
-            'jwt_zend_auth' => [
+            'jwt_laminas_auth' => [
                 'signer' => Sha256::class,
                 'readOnly' => false,
                 'signKey' => '',

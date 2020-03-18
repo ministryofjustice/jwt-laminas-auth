@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace JwtZendAuth\Authentication\Storage;
+namespace JwtLaminasAuth\Authentication\Storage;
 
-use Zend\Authentication\Storage\StorageInterface;
-use Zend\Http\Request;
-use Zend\Http\Response;
-use Zend\Stdlib\RequestInterface;
+use Laminas\Authentication\Storage\StorageInterface;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
+use Laminas\Stdlib\RequestInterface;
 
 class Header implements StorageInterface
 {

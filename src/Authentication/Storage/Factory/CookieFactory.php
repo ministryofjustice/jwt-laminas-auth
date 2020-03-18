@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JwtZendAuth\Authentication\Storage\Factory;
+namespace JwtLaminasAuth\Authentication\Storage\Factory;
 
 use Interop\Container\ContainerInterface;
-use JwtZendAuth\Authentication\Storage\Cookie;
-use Zend\EventManager\EventManager;
-use Zend\Http\Response;
-use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use JwtLaminasAuth\Authentication\Storage\Cookie;
+use Laminas\EventManager\EventManager;
+use Laminas\Http\Response;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\FactoryInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 class CookieFactory implements FactoryInterface
 {
@@ -27,7 +27,7 @@ class CookieFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): Cookie
     {
-        $config = $container->get('Config')['jwt_zend_auth'];
+        $config = $container->get('Config')['jwt_laminas_auth'];
 
         $config['cookieOptions']['expiry'] = $config['expiry'];
 

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace JwtZendAuth\Service\Factory;
+namespace JwtLaminasAuth\Service\Factory;
 
 use Interop\Container\ContainerInterface;
-use JwtZendAuth\Service\JwtService;
+use JwtLaminasAuth\Service\JwtService;
 use Lcobucci\JWT\Parser;
 use RuntimeException;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\FactoryInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 class JwtServiceFactory implements FactoryInterface
 {
@@ -26,7 +26,7 @@ class JwtServiceFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): JwtService
     {
-        $config = $container->get('Config')['jwt_zend_auth'];
+        $config = $container->get('Config')['jwt_laminas_auth'];
 
         $signer = new $config['signer']();
 

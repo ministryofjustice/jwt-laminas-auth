@@ -1,13 +1,13 @@
 <?php
 
-namespace JwtZendAuthTest\Authentication\Storage;
+namespace JwtLaminasAuthTest\Authentication\Storage;
 
-use JwtZendAuth\Authentication\Storage\Cookie;
+use JwtLaminasAuth\Authentication\Storage\Cookie;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Zend\Console\Request as ConsoleRequest;
-use Zend\Http\Header\Cookie as CookieHeader;
-use Zend\Http\Request;
-use Zend\Http\Response;
+use Laminas\Console\Request as ConsoleRequest;
+use Laminas\Http\Header\Cookie as CookieHeader;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
 
 class CookieTest extends MockeryTestCase
 {

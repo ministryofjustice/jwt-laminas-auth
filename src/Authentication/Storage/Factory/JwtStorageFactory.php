@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JwtZendAuth\Authentication\Storage\Factory;
+namespace JwtLaminasAuth\Authentication\Storage\Factory;
 
 use Interop\Container\ContainerInterface;
-use JwtZendAuth\Authentication\Storage\JwtStorage;
-use JwtZendAuth\Service\JwtService;
-use Zend\Authentication\Storage\Chain;
-use Zend\Authentication\Storage\StorageInterface;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use JwtLaminasAuth\Authentication\Storage\JwtStorage;
+use JwtLaminasAuth\Service\JwtService;
+use Laminas\Authentication\Storage\Chain;
+use Laminas\Authentication\Storage\StorageInterface;
+use Laminas\ServiceManager\FactoryInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 class JwtStorageFactory implements FactoryInterface
 {
@@ -27,7 +27,7 @@ class JwtStorageFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null): JwtStorage
     {
-        $config = $container->get('Config')['jwt_zend_auth'];
+        $config = $container->get('Config')['jwt_laminas_auth'];
 
         return new JwtStorage(
             $container->get(JwtService::class),
@@ -38,7 +38,7 @@ class JwtStorageFactory implements FactoryInterface
 
     private function buildBaseStorage(ContainerInterface $container): StorageInterface
     {
-        $config = $container->get('Config')['jwt_zend_auth']['storage'];
+        $config = $container->get('Config')['jwt_laminas_auth']['storage'];
 
         if ($config['useChainAdaptor'] !== true) {
             return $container->get($config['adaptor']);

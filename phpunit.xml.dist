@@ -2,7 +2,7 @@
 <phpunit bootstrap="./vendor/autoload.php">
 
     <testsuites>
-        <testsuite name="Jwt Zend Auth tests">
+        <testsuite name="Jwt Laminas Auth tests">
             <directory>./test</directory>
         </testsuite>
     </testsuites>

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace JwtZendAuth\Authentication\Storage\Factory;
+namespace JwtLaminasAuth\Authentication\Storage\Factory;
 
 use Interop\Container\ContainerInterface;
-use JwtZendAuth\Authentication\Storage\Header;
-use Zend\EventManager\EventManager;
-use Zend\Http\Response;
-use Zend\Mvc\MvcEvent;
-use Zend\ServiceManager\FactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use JwtLaminasAuth\Authentication\Storage\Header;
+use Laminas\EventManager\EventManager;
+use Laminas\Http\Response;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\FactoryInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 class HeaderFactory implements FactoryInterface
 {

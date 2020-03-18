@@ -10,7 +10,7 @@ services:
     command: ["install", "--ignore-platform-reqs"]
 
   unit-test:
-    image: jwt-zend-auth-unit
+    image: jwt-laminas-auth-unit
     build:
       context: ./
       dockerfile: ./unittest.Dockerfile

@@ -1,15 +1,15 @@
-# Zend Auth JWT module
+# Laminas Auth JWT module
 
-This module provides authentication storage via JWT 
+This module provides authentication storage via JWT.
 
 ## Installation
 
-Composer require ministryofjustice/jwt-zend-auth
+    composer require ministryofjustice/jwt-laminas-auth
 
-Copy jwtzendauth.global.php to your autoload config directory and 
+Copy `jwt_laminas_auth.global.php` to your autoload config directory and
 change the settings as appropriate.
 
-Enable the module JwtZendAuth in your application config
+Enable the module `JwtLaminasAuth` in your application config.
 
 ## Development using docker
 

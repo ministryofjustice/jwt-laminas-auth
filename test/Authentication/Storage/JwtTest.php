@@ -1,14 +1,14 @@
 <?php
 
-namespace JwtZendAuthTest\Authentication\Storage;
+namespace JwtLaminasAuthTest\Authentication\Storage;
 
-use JwtZendAuth\Authentication\Storage\JwtStorage;
-use JwtZendAuth\Service\JwtService;
+use JwtLaminasAuth\Authentication\Storage\JwtStorage;
+use JwtLaminasAuth\Service\JwtService;
 use Lcobucci\JWT\Claim\Basic;
 use Lcobucci\JWT\Token;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Zend\Authentication\Storage\StorageInterface;
+use Laminas\Authentication\Storage\StorageInterface;
 
 class JwtTest extends MockeryTestCase
 {

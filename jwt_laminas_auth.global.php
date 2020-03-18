@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'jwt_zend_auth' => [
+    'jwt_laminas_auth' => [
         // Choose signing method for the tokens
         'signer' => \Lcobucci\JWT\Signer\Hmac\Sha256::class,
         /*

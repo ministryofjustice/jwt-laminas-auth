@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace JwtZendAuth\Authentication\Storage;
+namespace JwtLaminasAuth\Authentication\Storage;
 
-use JwtZendAuth\Service\JwtService as JwtService;
+use JwtLaminasAuth\Service\JwtService as JwtService;
 use Lcobucci\JWT\Token;
 use OutOfBoundsException;
 use RuntimeException;
-use Zend\Authentication\Storage\StorageInterface;
+use Laminas\Authentication\Storage\StorageInterface;
 
 class JwtStorage implements StorageInterface
 {
