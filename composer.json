@@ -1,17 +1,17 @@
 {
-    "name": "ministryofjustice/jwt-zend-auth",
-    "description": "JWT authentication module for ZF2/3",
+    "name": "ministryofjustice/jwt-laminas-auth",
+    "description": "JWT authentication module for Laminas",
     "prefer-stable": true,
     "minimum-stability": "dev",
     "require": {
         "php": "^7.1",
-        "zendframework/zend-servicemanager": "^2.3.0 || ^3.4",
-        "zendframework/zend-modulemanager": "^2.3.0",
-        "zendframework/zend-authentication": "^2.3.0",
-        "zendframework/zend-http": "^2.3.0",
-        "zendframework/zend-console": "^2.3.0",
-        "zendframework/zend-mvc": "^2.3.0 || ^3.1",
-        "lcobucci/jwt":"~3.0.0"
+        "lcobucci/jwt":"~3.0.0",
+        "laminas/laminas-servicemanager": "^3.4",
+        "laminas/laminas-modulemanager": "^2.8",
+        "laminas/laminas-authentication": "^2.7",
+        "laminas/laminas-http": "^2.11",
+        "laminas/laminas-console": "^2.8",
+        "laminas/laminas-mvc": "^3.1"
     },
     "require-dev": {
         "mockery/mockery": "^1.2.0",
@@ -19,12 +19,12 @@
     },
     "autoload": {
         "psr-4": {
-            "JwtZendAuth\\": "src/"
+            "JwtLaminasAuth\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "JwtZendAuthTest\\": "test/"
+            "JwtLaminasAuthTest\\": "test/"
         }
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace JwtZendAuth\Service;
+namespace JwtLaminasAuth\Service;
 
 use InvalidArgumentException;
 use Lcobucci\JWT\Builder;
