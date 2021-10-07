@@ -6,10 +6,12 @@ namespace JwtLaminasAuth\Service\Factory;
 
 use Interop\Container\ContainerInterface;
 use JwtLaminasAuth\Service\JwtService;
-use Lcobucci\JWT\Parser;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use RuntimeException;
-use Laminas\ServiceManager\FactoryInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
 
 class JwtServiceFactory implements FactoryInterface
 {
@@ -38,10 +40,11 @@ class JwtServiceFactory implements FactoryInterface
             throw new RuntimeException('A verify key was not provided');
         }
 
+        $configuration = Configuration::forAsymmetricSigner($signer, InMemory::plainText($config['signKey']), InMemory::plainText($config['verifyKey']));
+        $configuration->setValidationConstraints(new SignedWith($signer, InMemory::plainText($config['verifyKey'])));
+
         return new JwtService(
-            $signer,
-            new Parser(),
-            $config['verifyKey'],
+            $configuration,
             $config['signKey']
         );
     }

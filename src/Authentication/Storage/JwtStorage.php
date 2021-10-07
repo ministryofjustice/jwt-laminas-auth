@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JwtLaminasAuth\Authentication\Storage;
 
+use DateTimeImmutable;
 use JwtLaminasAuth\Service\JwtService as JwtService;
 use Lcobucci\JWT\Token;
 use OutOfBoundsException;
@@ -15,44 +16,14 @@ class JwtStorage implements StorageInterface
     const SESSION_CLAIM_NAME = 'session-data';
     const DEFAULT_EXPIRATION_SECS = 600;
 
-    /**
-     * @var bool
-     */
-    private $hasReadClaimData = false;
+    private bool $hasReadClaimData = false;
+    private ?Token $token = null;
 
-    /**
-     * @var Token
-     */
-    private $token;
-
-    /**
-     * @var StorageInterface
-     */
-    private $wrapped;
-
-    /**
-     * @var JwtService
-     */
-    private $jwt;
-
-    /**
-     * @var int
-     */
-    private $expirationSecs;
-
-    /**
-     * @param JwtService $jwt
-     * @param StorageInterface $wrapped
-     * @param int $expirationSecs
-     */
     public function __construct(
-        JwtService $jwt,
-        StorageInterface $wrapped,
-        $expirationSecs = self::DEFAULT_EXPIRATION_SECS
+        private JwtService $jwt,
+        private StorageInterface $wrapped,
+        private int $expirationSecs = self::DEFAULT_EXPIRATION_SECS
     ) {
-        $this->jwt = $jwt;
-        $this->wrapped = $wrapped;
-        $this->expirationSecs = $expirationSecs;
     }
 
     /**
@@ -126,26 +97,25 @@ class JwtStorage implements StorageInterface
         }
 
         try {
-            return $this->retrieveToken()->getClaim(self::SESSION_CLAIM_NAME);
+            return $this->retrieveToken()->claims()->get(self::SESSION_CLAIM_NAME);
         } catch (OutOfBoundsException $e) {
             return null;
         }
     }
 
-    /**
-     * @return bool
-     */
-    private function shouldRefreshToken()
+    private function shouldRefreshToken(): bool
     {
         if (!$this->hasTokenValue()) {
             return false;
         }
 
-        try {
-            return date('U') >= ($this->retrieveToken()->getClaim('iat') + 60) && $this->retrieveClaim() !== null;
-        } catch (OutOfBoundsException $e) {
+        $iat = $this->retrieveToken()->claims()->get('iat');
+
+        if (!($iat instanceof DateTimeImmutable)) {
             return false;
         }
+
+        return date('U') >= (intval($iat->format('U')) + 60) && $this->retrieveClaim() !== null;
     }
 
     /**
@@ -157,8 +127,9 @@ class JwtStorage implements StorageInterface
             $this->token = $this->jwt->createSignedToken(self::SESSION_CLAIM_NAME, $claim, $this->expirationSecs);
 
             $this->wrapped->write(
-                $this->token->__toString()
+                $this->token->toString()
             );
-        } catch (RuntimeException $e) {}
+        } catch (RuntimeException $e) {
+        }
     }
 }
