@@ -1,28 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace JwtLaminasAuthTest\Authentication\Storage;
 
 use JwtLaminasAuth\Authentication\Storage\JwtStorage;
 use JwtLaminasAuth\Service\JwtService;
-use Lcobucci\JWT\Claim\Basic;
 use Lcobucci\JWT\Token;
+use Lcobucci\JWT\Token\DataSet;
+use Lcobucci\JWT\Token\Plain;
+use Lcobucci\JWT\Token\Signature;
 use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Laminas\Authentication\Storage\StorageInterface;
+use Mockery\MockInterface;
 
 class JwtTest extends MockeryTestCase
 {
     /**
      * @dataProvider provideTestRead
-     * @param $storageValue
-     * @param $token
-     * @param $expected
      */
-    public function testRead($storageValue, $token, $expected)
+    public function testRead(?string $storageValue, ?Token $token, ?string $expected)
     {
+        /** @var JwtService|MockInterface */
         $mockJwtService = m::mock(JwtService::class);
         $mockJwtService->shouldReceive('parseToken')->with($storageValue)->andReturn($token);
 
+        /** @var StorageInterface|MockInterface */
         $mockStorage = m::mock(StorageInterface::class);
         $mockStorage->shouldReceive('read')->andReturn($storageValue);
 
@@ -30,20 +34,43 @@ class JwtTest extends MockeryTestCase
         $this->assertEquals($expected, $sut->read());
     }
 
-    public function provideTestRead()
+    public function provideTestRead(): array
     {
-        $claim1 = new Basic('session-data', 'user1');
-        $claim2 = new Basic('iat', date('U'));
-
         return [
-            // no token present in underlying storage
-            [null, null, null],
-            //invalid token present in underlying storage
-            ['token', new Token(), null],
-            //token with no expiry
-            ['token', new Token([], ['session-data' => $claim1]), 'user1'],
-            //token which doesn't need refreshing
-            ['token', new Token([], ['session-data' => $claim1, 'iat' => $claim2]), 'user1'],
+            'no token present in underlying storage' => [null, null, null],
+            'invalid token present in underlying storage' => [
+                'token',
+                new Plain(
+                    new DataSet([], ''),
+                    new DataSet([], ''),
+                    new Signature('', '')
+                ),
+                null
+            ],
+            'token with no expiry' => [
+                'token',
+                new Plain(
+                    new DataSet([], ''),
+                    new DataSet(['session-data' => 'user1'], 'not encoded'),
+                    new Signature('', '')
+                ),
+                'user1'
+            ],
+            'token which doesn\'t need refreshing' => [
+                'token',
+                new Plain(
+                    new DataSet([], ''),
+                    new DataSet(
+                        [
+                        'session-data' => 'user1',
+                        'iat' => date('U')
+                        ],
+                        'not encoded'
+                    ),
+                    new Signature('', '')
+                ),
+                'user1'
+            ],
         ];
     }
 
@@ -55,9 +82,11 @@ class JwtTest extends MockeryTestCase
      */
     public function testIsEmpty($storageValue, $token, $expected)
     {
+        /** @var JwtService|MockInterface */
         $mockJwtService = m::mock(JwtService::class);
         $mockJwtService->shouldReceive('parseToken')->with($storageValue)->andReturn($token);
 
+        /** @var StorageInterface|MockInterface */
         $mockStorage = m::mock(StorageInterface::class);
         $mockStorage->shouldReceive('read')->andReturn($storageValue);
 
@@ -65,20 +94,39 @@ class JwtTest extends MockeryTestCase
         $this->assertEquals($expected, $sut->isEmpty());
     }
 
-    public function provideTestIsEmpty()
+    public function provideTestIsEmpty(): array
     {
-        $claim1 = new Basic('session-data', 'user1');
-        $claim2 = new Basic('iat', date('U'));
-
         return [
-            // no token present in underlying storage
-            [null, null, true],
-            //invalid token present in underlying storage
-            ['token', new Token(), true],
-            //token with no expiry
-            ['token', new Token([], ['session-data' => $claim1]), false],
-            //token which doesn't need refreshing
-            ['token', new Token([], ['session-data' => $claim1, 'iat' => $claim2]), false],
+            'no token present in underlying storage' => [null, null, true],
+            'invalid token present in underlying storage' => [
+                'token',
+                new Plain(new DataSet([], ''), new DataSet([], ''), new Signature('', '')),
+                true
+            ],
+            'token with no expiry' => [
+                'token',
+                new Plain(
+                    new DataSet([], ''),
+                    new DataSet(['session-data' => 'user1'], 'not encoded'),
+                    new Signature('', '')
+                ),
+                false
+            ],
+            'token which doesn\'t need refreshing' => [
+                'token',
+                new Plain(
+                    new DataSet([], ''),
+                    new DataSet(
+                        [
+                        'session-data' => 'user1',
+                        'iat' => date('U')
+                        ],
+                        'not encoded'
+                    ),
+                    new Signature('', '')
+                ),
+                false
+            ],
         ];
     }
 
@@ -86,21 +134,23 @@ class JwtTest extends MockeryTestCase
     {
         $storageValue = 'token';
 
-        $claim1 = new Basic('session-data', 'user1');
-        $claim2 = new Basic('iat', date('U') - 100);
+        $headers = new DataSet(['iat' => date('U') - 100], 'not encoded');
+        $claims = new DataSet(['session-data' => 'user1'], 'not encoded');
 
-        $token = new Token([], ['session-data' => $claim1, 'iat' => $claim2]);
+        $token = new Plain($headers, $claims, new Signature('hash', 'signature'));
         $expected = 'user1';
         $newTokenValue = 'newtoken';
 
+        /** @var Token|MockInterface */
         $newToken = m::mock(Token::class);
-        $newToken->shouldReceive('getPayload')->andReturn($newTokenValue);
-        $newToken->shouldReceive('getClaim')->with('session-data')->andReturn($claim1);
+        $newToken->shouldReceive('claims')->andReturn($claims);
 
+        /** @var JwtService|MockInterface */
         $mockJwtService = m::mock(JwtService::class);
         $mockJwtService->shouldReceive('parseToken')->with($storageValue)->andReturn($token);
         $mockJwtService->shouldReceive('createSignedToken')->with('session-data', $expected, 600)->andReturn($newToken);
 
+        /** @var StorageInterface|MockInterface */
         $mockStorage = m::mock(StorageInterface::class);
         $mockStorage->shouldReceive('read')->andReturn($storageValue);
         $mockStorage->shouldReceive('write')->with($newTokenValue);
@@ -118,16 +168,19 @@ class JwtTest extends MockeryTestCase
      */
     public function testWrite($storageValue, $token, $shouldWrite, $written)
     {
+        /** @var JwtService|MockInterface */
         $mockJwtService = m::mock(JwtService::class);
         $mockJwtService->shouldReceive('parseToken')->with($storageValue)->andReturn($token);
 
+        /** @var StorageInterface|MockInterface */
         $mockStorage = m::mock(StorageInterface::class);
         $mockStorage->shouldReceive('read')->andReturn($storageValue);
         if ($shouldWrite) {
             $newTokenValue = 'newtoken';
 
+            /** @var Token|MockInterface */
             $newToken = m::mock(Token::class);
-            $newToken->shouldReceive('__toString')->andReturn($newTokenValue);
+            $newToken->shouldReceive('toString')->andReturn($newTokenValue);
 
             $mockJwtService->shouldReceive('createSignedToken')->with('session-data', $written, 600)->andReturn($newToken);
             $mockStorage->shouldReceive('write')->with($newTokenValue)->once();
@@ -136,26 +189,49 @@ class JwtTest extends MockeryTestCase
         $sut->write($written);
     }
 
-    public function provideTestWrite()
+    public function provideTestWrite(): array
     {
-        $claim1 = new Basic('session-data', 'user1');
-
         return [
-            // no token present in underlying storage
-            [null, null, true, 'newValue'],
-            //invalid token present in underlying storage; write new value
-            ['token', new Token(), true, 'newValue'],
-            //token with same value as written
-            ['token', new Token([], ['session-data' => $claim1]), false, 'user1'],
-            //token with different value to written
-            ['token', new Token([], ['session-data' => $claim1]), true, 'newValue'],
+            'no token present in underlying storage' => [null, null, true, 'newValue'],
+            'invalid token present in underlying storage; write new value' => [
+                'token',
+                new Plain(
+                    new DataSet([], ''),
+                    new DataSet([], ''),
+                    new Signature('', '')
+                ),
+                true,
+                'newValue'
+            ],
+            'token with same value as written' => [
+                'token',
+                new Plain(
+                    new DataSet([], ''),
+                    new DataSet(['session-data' => 'user1'], 'not encoded'),
+                    new Signature('', '')
+                ),
+                false,
+                'user1'
+            ],
+            'token with different value to written' => [
+                'token',
+                new Plain(
+                    new DataSet([], ''),
+                    new DataSet(['session-data' => 'user1'], 'not encoded'),
+                    new Signature('', '')
+                ),
+                true,
+                'newValue'
+            ],
         ];
     }
 
     public function testClear()
     {
+        /** @var JwtService|MockInterface */
         $mockJwtService = m::mock(JwtService::class);
 
+        /** @var StorageInterface|MockInterface */
         $mockStorage = m::mock(StorageInterface::class);
         $mockStorage->shouldReceive('clear')->once();
 

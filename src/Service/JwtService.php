@@ -4,78 +4,45 @@ declare(strict_types=1);
 
 namespace JwtLaminasAuth\Service;
 
+use DateInterval;
+use DateTimeImmutable;
 use InvalidArgumentException;
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\Signer;
+use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Token;
-use Lcobucci\JWT\ValidationData;
 use RuntimeException;
 
 class JwtService
 {
-    /**
-     * @var Signer
-     */
-    private $signer;
-
-    /**
-     * @var Parser
-     */
-    private $parser;
-
-    /**
-     * @var string
-     */
-    private $verifyKey;
-
-    /**
-     * @var string
-     */
-    private $signKey;
-
-    /**
-     * @param Signer $signer
-     * @param Parser $parser
-     * @param $verifyKey
-     * @param $signKey
-     */
-    public function __construct(Signer $signer, Parser $parser, $verifyKey, $signKey)
-    {
-        $this->signer = $signer;
-        $this->verifyKey = $verifyKey;
-        $this->signKey = $signKey;
-        $this->parser = $parser;
+    public function __construct(
+        private Configuration $config,
+        private string $signKey
+    ) {
     }
 
-    public function createSignedToken($claim, $value, $expirationSecs)
+    public function createSignedToken(string $claim, mixed $value, int $expirationSecs): Token
     {
         if (empty($this->signKey)) {
             throw new RuntimeException('Cannot sign a token, no sign key was provided');
         }
 
-        $timestamp = date('U');
-        return (new Builder())
-            ->setIssuedAt($timestamp)
-            ->setExpiration($timestamp + $expirationSecs)
-            ->set($claim, $value)
-            ->sign($this->signer, $this->signKey)
-            ->getToken();
+        $now = new DateTimeImmutable();
+        $now = $now->setTime(intval($now->format('G')), intval($now->format('i')), intval($now->format('s')));
+        return $this->config->builder()
+            ->issuedAt($now)
+            ->expiresAt($now->add(new DateInterval('PT' . $expirationSecs . 'S')))
+            ->withClaim($claim, $value)
+            ->getToken($this->config->signer(), $this->config->signingKey());
     }
 
-    public function parseToken($token)
+    public function parseToken(string $tokenString): Token
     {
         try {
-            $token = $this->parser->parse($token);
-        } catch (InvalidArgumentException $invalidToken) {
+            $token = $this->config->parser()->parse($tokenString);
+        } catch (InvalidArgumentException) {
             return new Token();
         }
 
-        if (!$token->validate(new ValidationData())) {
-            return new Token();
-        }
-
-        if (!$token->verify($this->signer, $this->verifyKey)) {
+        if (!$this->config->validator()->validate($token, ...$this->config->validationConstraints())) {
             return new Token();
         }
 

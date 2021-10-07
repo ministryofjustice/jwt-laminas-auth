@@ -3,7 +3,7 @@ COPY composer.json composer.json
 COPY composer.lock composer.lock
 RUN composer install --no-interaction
 
-FROM php:7.4-fpm-alpine
+FROM php:8.0-fpm-alpine
 
 COPY ./ /app
 COPY --from=composer /app/vendor /app/vendor

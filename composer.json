@@ -4,18 +4,17 @@
     "prefer-stable": true,
     "minimum-stability": "dev",
     "require": {
-        "php": "^7.1",
-        "lcobucci/jwt":"~3.4.5",
+        "php": "^8.0",
+        "lcobucci/jwt":"^4.0",
         "laminas/laminas-servicemanager": "^3.4",
         "laminas/laminas-modulemanager": "^2.8",
         "laminas/laminas-authentication": "^2.7",
         "laminas/laminas-http": "^2.11",
-        "laminas/laminas-console": "^2.8",
         "laminas/laminas-mvc": "^3.1"
     },
     "require-dev": {
         "mockery/mockery": "^1.2.0",
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^9.0"
     },
     "autoload": {
         "psr-4": {

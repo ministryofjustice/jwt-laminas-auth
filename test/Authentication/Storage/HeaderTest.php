@@ -4,7 +4,6 @@ namespace JwtLaminasAuthTest\Authentication\Storage;
 
 use JwtLaminasAuth\Authentication\Storage\Header;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Laminas\Console\Request as ConsoleRequest;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 
@@ -33,7 +32,6 @@ class HeaderTest extends MockeryTestCase
             [$request, 'token'],
             [$emptyRequest, null],
             [new Request(), null],
-            [new ConsoleRequest(), null]
         ];
     }
 
@@ -60,7 +58,6 @@ class HeaderTest extends MockeryTestCase
             [$request, false],
             [$emptyRequest, true],
             [new Request(), true],
-            [new ConsoleRequest(), true]
         ];
     }
 
