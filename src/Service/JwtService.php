@@ -6,10 +6,12 @@ namespace JwtLaminasAuth\Service;
 
 use DateInterval;
 use DateTimeImmutable;
-use InvalidArgumentException;
+use JwtLaminasAuth\Service\Exception\InvalidJwtException;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Token;
+use Lcobucci\JWT\Token\Plain;
 use RuntimeException;
+use Throwable;
 
 class JwtService
 {
@@ -27,6 +29,7 @@ class JwtService
 
         $now = new DateTimeImmutable();
         $now = $now->setTime(intval($now->format('G')), intval($now->format('i')), intval($now->format('s')));
+
         return $this->config->builder()
             ->issuedAt($now)
             ->expiresAt($now->add(new DateInterval('PT' . $expirationSecs . 'S')))
@@ -34,16 +37,16 @@ class JwtService
             ->getToken($this->config->signer(), $this->config->signingKey());
     }
 
-    public function parseToken(string $tokenString): Token
+    public function parseToken(string $tokenString): Plain
     {
         try {
             $token = $this->config->parser()->parse($tokenString);
-        } catch (InvalidArgumentException) {
-            return new Token();
+        } catch (Throwable $e) {
+            throw new InvalidJwtException($e->getMessage());
         }
 
         if (!$this->config->validator()->validate($token, ...$this->config->validationConstraints())) {
-            return new Token();
+            throw new InvalidJwtException('Constraints were not met');
         }
 
         return $token;

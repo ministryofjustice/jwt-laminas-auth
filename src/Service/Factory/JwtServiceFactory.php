@@ -9,8 +9,10 @@ use JwtLaminasAuth\Service\JwtService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use RuntimeException;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use Lcobucci\Clock\SystemClock;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 
 class JwtServiceFactory implements FactoryInterface
@@ -41,7 +43,10 @@ class JwtServiceFactory implements FactoryInterface
         }
 
         $configuration = Configuration::forAsymmetricSigner($signer, InMemory::plainText($config['signKey']), InMemory::plainText($config['verifyKey']));
-        $configuration->setValidationConstraints(new SignedWith($signer, InMemory::plainText($config['verifyKey'])));
+        $configuration->setValidationConstraints(
+            new SignedWith($signer, InMemory::plainText($config['verifyKey'])),
+            new LooseValidAt(SystemClock::fromUTC()),
+        );
 
         return new JwtService(
             $configuration,
