@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JwtLaminasAuthTest\Authentication\Storage;
 
 use JwtLaminasAuth\Authentication\Storage\JwtStorage;
+use JwtLaminasAuth\Service\Exception\InvalidJwtException;
 use JwtLaminasAuth\Service\JwtService;
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\Token\DataSet;
@@ -130,6 +131,20 @@ class JwtTest extends MockeryTestCase
         ];
     }
 
+    public function testIsEmptyHandlesInvalidJwtException()
+    {
+        /** @var JwtService|MockInterface */
+        $mockJwtService = m::mock(JwtService::class);
+        $mockJwtService->shouldReceive('parseToken')->with('token')->andThrow(new InvalidJwtException('Invalid JWT'));
+
+        /** @var StorageInterface|MockInterface */
+        $mockStorage = m::mock(StorageInterface::class);
+        $mockStorage->shouldReceive('read')->andReturn('token');
+
+        $sut = new JwtStorage($mockJwtService, $mockStorage);
+        $this->assertEquals(true, $sut->isEmpty());
+    }
+
     public function testReadRewritesToken()
     {
         $storageValue = 'token';
@@ -157,6 +172,20 @@ class JwtTest extends MockeryTestCase
 
         $sut = new JwtStorage($mockJwtService, $mockStorage);
         $this->assertEquals($expected, $sut->read());
+    }
+
+    public function testReadHandlesInvalidJwtException()
+    {
+        /** @var JwtService|MockInterface */
+        $mockJwtService = m::mock(JwtService::class);
+        $mockJwtService->shouldReceive('parseToken')->with('token')->andThrow(new InvalidJwtException('Invalid JWT'));
+
+        /** @var StorageInterface|MockInterface */
+        $mockStorage = m::mock(StorageInterface::class);
+        $mockStorage->shouldReceive('read')->andReturn('token');
+
+        $sut = new JwtStorage($mockJwtService, $mockStorage);
+        $this->assertEquals(null, $sut->read());
     }
 
     /**

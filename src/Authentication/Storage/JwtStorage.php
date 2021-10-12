@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JwtLaminasAuth\Authentication\Storage;
 
 use DateTimeImmutable;
+use JwtLaminasAuth\Service\Exception\InvalidJwtException;
 use JwtLaminasAuth\Service\JwtService as JwtService;
 use Lcobucci\JWT\Token;
 use OutOfBoundsException;
@@ -81,7 +82,11 @@ class JwtStorage implements StorageInterface
     private function retrieveToken()
     {
         if ($this->token === null) {
-            $this->token = $this->jwt->parseToken($this->wrapped->read());
+            try {
+                $this->token = $this->jwt->parseToken($this->wrapped->read());
+            } catch (InvalidJwtException) {
+                // If the JWT isn't valid, leave it as null
+            }
         }
 
         return $this->token;
@@ -96,8 +101,13 @@ class JwtStorage implements StorageInterface
             return null;
         }
 
+        $token = $this->retrieveToken();
+        if ($token === null) {
+            return null;
+        }
+
         try {
-            return $this->retrieveToken()->claims()->get(self::SESSION_CLAIM_NAME);
+            return $token->claims()->get(self::SESSION_CLAIM_NAME);
         } catch (OutOfBoundsException $e) {
             return null;
         }
@@ -109,7 +119,12 @@ class JwtStorage implements StorageInterface
             return false;
         }
 
-        $iat = $this->retrieveToken()->claims()->get('iat');
+        $token = $this->retrieveToken();
+        if ($token === null) {
+            return false;
+        }
+
+        $iat = $token->claims()->get('iat');
 
         if (!($iat instanceof DateTimeImmutable)) {
             return false;
