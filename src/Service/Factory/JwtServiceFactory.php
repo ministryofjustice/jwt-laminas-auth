@@ -7,6 +7,7 @@ namespace JwtLaminasAuth\Service\Factory;
 use Interop\Container\ContainerInterface;
 use JwtLaminasAuth\Service\JwtService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Lcobucci\JWT\Signer\Key;
 use RuntimeException;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Lcobucci\Clock\SystemClock;
@@ -42,9 +43,19 @@ class JwtServiceFactory implements FactoryInterface
             throw new RuntimeException('A verify key was not provided');
         }
 
-        $configuration = Configuration::forAsymmetricSigner($signer, InMemory::plainText($config['signKey']), InMemory::plainText($config['verifyKey']));
+        $signKey = $config['signKey'];
+        if (!is_object($signKey) || !$signKey instanceof Key) {
+            $signKey = InMemory::plainText($signKey);
+        }
+
+        $verifyKey = $config['verifyKey'];
+        if (!is_object($verifyKey) || !$verifyKey instanceof Key) {
+            $verifyKey = InMemory::plainText($verifyKey);
+        }
+
+        $configuration = Configuration::forAsymmetricSigner($signer, $signKey, $verifyKey);
         $configuration->setValidationConstraints(
-            new SignedWith($signer, InMemory::plainText($config['verifyKey'])),
+            new SignedWith($signer, $verifyKey),
             new LooseValidAt(SystemClock::fromUTC()),
         );
 
