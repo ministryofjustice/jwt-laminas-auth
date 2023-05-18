@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8cf180d72327e04015eee356931899ef",
+    "content-hash": "87de5f2696526657759c11666183518d",
     "packages": [
         {
             "name": "brick/varexporter",
@@ -3337,7 +3337,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0"
+        "php": "^8.1"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
