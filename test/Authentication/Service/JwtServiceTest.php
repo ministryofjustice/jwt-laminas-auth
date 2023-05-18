@@ -64,6 +64,8 @@ class JwtServiceTest extends MockeryTestCase
             return $mockBuilder;
         });
 
+        $this->mockSigningKey->shouldReceive('contents')->andReturn('my-signing-key');
+
         $token = $this->sut->createSignedToken('claim', 'value', 100);
         $this->assertEquals($mockToken, $token);
     }
@@ -87,7 +89,8 @@ class JwtServiceTest extends MockeryTestCase
         $this->config->setValidator($mockValidator);
         $this->config->setValidationConstraints($mockConstraint);
 
-        $this->sut->parseToken('encoded jwt');
+        $token = $this->sut->parseToken('encoded jwt');
+        self::assertEquals($mockToken, $token);
     }
 
     public function test_parseToken_handles_invalid_parse()
