@@ -15,15 +15,13 @@ use Throwable;
 
 class JwtService
 {
-    public function __construct(
-        private Configuration $config,
-        private string $signKey
-    ) {
+    public function __construct(private Configuration $config)
+    {
     }
 
     public function createSignedToken(string $claim, mixed $value, int $expirationSecs): Token
     {
-        if (empty($this->signKey)) {
+        if (empty($this->config->signingKey()->contents())) {
             throw new RuntimeException('Cannot sign a token, no sign key was provided');
         }
 

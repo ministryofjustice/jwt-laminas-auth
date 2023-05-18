@@ -59,9 +59,6 @@ class JwtServiceFactory implements FactoryInterface
             new LooseValidAt(SystemClock::fromUTC()),
         );
 
-        return new JwtService(
-            $configuration,
-            $config['signKey']
-        );
+        return new JwtService($configuration);
     }
 }

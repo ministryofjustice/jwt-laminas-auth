@@ -42,7 +42,7 @@ class JwtServiceTest extends MockeryTestCase
 
         $this->config = Configuration::forAsymmetricSigner($this->mockSigner, $this->mockSigningKey, $this->mockVerificationKey);
 
-        $this->sut = new JwtService($this->config, 'my-signing-key');
+        $this->sut = new JwtService($this->config);
     }
 
     public function test_createSignedToken()
