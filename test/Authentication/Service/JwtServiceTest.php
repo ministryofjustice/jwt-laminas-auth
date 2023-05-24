@@ -42,7 +42,7 @@ class JwtServiceTest extends MockeryTestCase
 
         $this->config = Configuration::forAsymmetricSigner($this->mockSigner, $this->mockSigningKey, $this->mockVerificationKey);
 
-        $this->sut = new JwtService($this->config, 'my-signing-key');
+        $this->sut = new JwtService($this->config);
     }
 
     public function test_createSignedToken()
@@ -63,6 +63,8 @@ class JwtServiceTest extends MockeryTestCase
         $this->config->setBuilderFactory(function () use ($mockBuilder) {
             return $mockBuilder;
         });
+
+        $this->mockSigningKey->shouldReceive('contents')->andReturn('my-signing-key');
 
         $token = $this->sut->createSignedToken('claim', 'value', 100);
         $this->assertEquals($mockToken, $token);
@@ -87,7 +89,8 @@ class JwtServiceTest extends MockeryTestCase
         $this->config->setValidator($mockValidator);
         $this->config->setValidationConstraints($mockConstraint);
 
-        $this->sut->parseToken('encoded jwt');
+        $token = $this->sut->parseToken('encoded jwt');
+        self::assertEquals($mockToken, $token);
     }
 
     public function test_parseToken_handles_invalid_parse()
