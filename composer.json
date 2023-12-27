@@ -3,6 +3,11 @@
     "description": "JWT authentication module for Laminas",
     "prefer-stable": true,
     "minimum-stability": "dev",
+    "config": {
+      "platform": {
+        "php": "8.2"
+      }
+    },
     "require": {
         "php": "^8.1",
         "lcobucci/jwt":"^5.0",
