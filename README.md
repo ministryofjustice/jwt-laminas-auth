@@ -1,3 +1,7 @@
+**This repository has been archived and is no longer actively maintained**
+
+----
+
 # Laminas Auth JWT module
 
 This module provides authentication storage via JWT.
